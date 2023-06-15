@@ -71,7 +71,7 @@ build() {
   # Building recovery
   source build/envsetup.sh
   export ALLOW_MISSING_DEPENDENCIES=true
-  lunch twrp_$DEVICE_NAME-eng || abort "ERROR: Failed to lunch the target!"
+  lunch ${MAKEFILE_NAME}-eng || abort "ERROR: Failed to lunch the target!"
   export TW_DEVICE_VERSION
   mka -j$(nproc --all) ${BUILD_TARGET}image || abort "ERROR: Failed to Build TWRP!"
 }
