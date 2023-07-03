@@ -1,12 +1,12 @@
-MANIFEST_URL="https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp"
-MANIFEST_BRANCH="twrp-11"
-DEVICE_TREE_URL="https://github.com/HemanthJabalpuri/twrp_OPPO_OP4B9B"
-DEVICE_TREE_BRANCH="test"
-DEVICE_PATH="device/OPPO/OP4B9B"
+MANIFEST_URL="https://github.com/minimal-manifest-twrp/platform_manifest_twrp_omni"
+MANIFEST_BRANCH="twrp-7.1"
+DEVICE_TREE_URL="https://github.com/HemanthJabalpuri/twrp_Micromax_A109/"
+DEVICE_TREE_BRANCH="android-4.4.2"
+DEVICE_PATH="device/Micromax/A109"
 COMMON_TREE_URL=""
 COMMON_PATH=""
 BUILD_TARGET="recovery"
-TW_DEVICE_VERSION="test5"
+TW_DEVICE_VERSION="test"
 
 DEVICE_NAME="$(echo $DEVICE_PATH | cut -d "/" -f 3)"
 case $MANIFEST_BRANCH in
