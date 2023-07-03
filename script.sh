@@ -1,5 +1,5 @@
 MANIFEST_URL="https://github.com/minimal-manifest-twrp/platform_manifest_twrp_omni"
-MANIFEST_BRANCH="twrp-7.1"
+MANIFEST_BRANCH="twrp-5.1"
 DEVICE_TREE_URL="https://github.com/HemanthJabalpuri/twrp_Micromax_A109"
 DEVICE_TREE_BRANCH="android-4.4.2"
 DEVICE_PATH="device/Micromax/A109"
