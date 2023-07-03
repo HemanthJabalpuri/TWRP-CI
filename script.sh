@@ -1,5 +1,5 @@
 MANIFEST_URL="https://github.com/minimal-manifest-twrp/platform_manifest_twrp_omni"
-MANIFEST_BRANCH="twrp-6.0"
+MANIFEST_BRANCH="twrp-7.1"
 DEVICE_TREE_URL="https://github.com/HemanthJabalpuri/twrp_Micromax_A109"
 DEVICE_TREE_BRANCH="android-4.4.2"
 DEVICE_PATH="device/Micromax/A109"
@@ -35,16 +35,6 @@ sync() {
 
   # Repo Sync
   repo sync -j$(nproc --all) --force-sync
-
-  # Apply patches
-  #cd system/core
-  #curl -sL https://github.com/HemanthJabalpuri/twrp_motorola_rhode/files/11550608/dontLoadVendorModules.txt | patch -p 1
-  #cd -
-  rm -rf bootable/recovery
-  git clone --depth=1 https://github.com/HemanthJabalpuri/android_bootable_recovery -b android-11 bootable/recovery
-  cd bootable/recovery
-  curl -sL https://github.com/HemanthJabalpuri/android_bootable_recovery/commit/6d5c365617778d107ccc6b32b55238715a06d0bc.patch | patch -p 1
-  cd -
 
   # Clone device tree
   git clone $DEVICE_TREE_URL -b $DEVICE_TREE_BRANCH $DEVICE_PATH || abort "ERROR: Failed to Clone the Device Tree!"
