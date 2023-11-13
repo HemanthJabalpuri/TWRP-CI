@@ -1,8 +1,8 @@
 MANIFEST_URL="https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp"
 MANIFEST_BRANCH="twrp-12.1"
-DEVICE_TREE_URL="https://github.com/HemanthJabalpuri/twrp_motorola_rhode"
-DEVICE_TREE_BRANCH="test"
-DEVICE_PATH="device/motorola/rhode"
+DEVICE_TREE_URL="https://github.com/HemanthJabalpuri/twrp_motorola_devon"
+DEVICE_TREE_BRANCH="android-12.1"
+DEVICE_PATH="device/motorola/devon"
 COMMON_TREE_URL=""
 COMMON_PATH=""
 BUILD_TARGET="boot"
@@ -36,6 +36,11 @@ sync() {
   # Repo Sync
   repo sync -j$(nproc --all) --force-sync
 
+  # Apply patches
+  cd system/core
+  curl -sL https://github.com/HemanthJabalpuri/twrp_motorola_rhode/files/11550608/dontLoadVendorModules.txt | patch -p 1
+  cd -
+  
   # Clone device tree
   git clone $DEVICE_TREE_URL -b $DEVICE_TREE_BRANCH $DEVICE_PATH || abort "ERROR: Failed to Clone the Device Tree!"
 
