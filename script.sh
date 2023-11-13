@@ -32,6 +32,7 @@ sync() {
 
   # Initialize repo
   which python
+  python --version
   repo init --depth=1 $MANIFEST_URL -b $MANIFEST_BRANCH
 
   # Repo Sync
