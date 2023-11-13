@@ -31,10 +31,11 @@ sync() {
   sudo ln -sf ~/bin/repo /usr/local/bin/repo
 
   # Initialize repo
+  sudo ln -sf python2 /usr/bin/python
   repo init --depth=1 $MANIFEST_URL -b $MANIFEST_BRANCH
 
   # Repo Sync
-  repo sync -j$(nproc --all) --force-sync
+  repo sync -j$(nproc --all) --force-sync || abort "sync error"
 
   # Apply patches
   cd system/core
