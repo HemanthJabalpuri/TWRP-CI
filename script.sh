@@ -31,7 +31,7 @@ sync() {
   sudo ln -sf ~/bin/repo /usr/local/bin/repo
 
   # Initialize repo
-  sudo ln -sf python2 /usr/bin/python
+  which python
   repo init --depth=1 $MANIFEST_URL -b $MANIFEST_BRANCH
 
   # Repo Sync
