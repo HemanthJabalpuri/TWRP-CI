@@ -1,12 +1,12 @@
 MANIFEST_URL="https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp"
 MANIFEST_BRANCH="twrp-12.1"
 DEVICE_TREE_URL="https://github.com/HemanthJabalpuri/twrp_motorola_rhode"
-DEVICE_TREE_BRANCH="android-12.1"
+DEVICE_TREE_BRANCH="test"
 DEVICE_PATH="device/motorola/rhode"
 COMMON_TREE_URL=""
 COMMON_PATH=""
 BUILD_TARGET="boot"
-TW_DEVICE_VERSION="test1"
+TW_DEVICE_VERSION="test2"
 
 DEVICE_NAME="$(echo $DEVICE_PATH | cut -d "/" -f 3)"
 case $MANIFEST_BRANCH in
@@ -37,9 +37,9 @@ sync() {
   python3 /usr/local/bin/repo sync -j$(nproc --all) --force-sync || abort "sync error"
 
   # Apply patches
-  cd system/core
-  curl -sL https://github.com/HemanthJabalpuri/twrp_motorola_rhode/files/11550608/dontLoadVendorModules.txt | patch -p 1
-  cd -
+  #cd system/core
+  #curl -sL https://github.com/HemanthJabalpuri/twrp_motorola_rhode/files/11550608/dontLoadVendorModules.txt | patch -p 1
+  #cd -
 
   cd bootable/recovery
   git pull https://gerrit.twrp.me/android_bootable_recovery refs/changes/45/6945/2
