@@ -41,11 +41,6 @@ sync() {
   curl -sL https://github.com/HemanthJabalpuri/twrp_motorola_rhode/files/11550608/dontLoadVendorModules.txt | patch -p 1
   cd -
 
-  #cd bootable/recovery
-  #git pull https://gerrit.twrp.me/android_bootable_recovery refs/changes/45/6945/2
-  #echo "applied patch"
-  #cd -
-
   # Clone device tree
   git clone $DEVICE_TREE_URL -b $DEVICE_TREE_BRANCH $DEVICE_PATH || abort "ERROR: Failed to Clone the Device Tree!"
 
