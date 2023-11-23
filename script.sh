@@ -37,9 +37,9 @@ sync() {
   python3 /usr/local/bin/repo sync -j$(nproc --all) --force-sync || abort "sync error"
 
   # Apply patches
-  cd system/core
-  curl -sL https://github.com/HemanthJabalpuri/twrp_motorola_rhode/files/11550608/dontLoadVendorModules.txt | patch -p 1
-  cd -
+  #cd system/core
+  #curl -sL https://github.com/HemanthJabalpuri/twrp_motorola_rhode/files/11550608/dontLoadVendorModules.txt | patch -p 1
+  #cd -
 
   # Clone device tree
   git clone $DEVICE_TREE_URL -b $DEVICE_TREE_BRANCH $DEVICE_PATH || abort "ERROR: Failed to Clone the Device Tree!"
