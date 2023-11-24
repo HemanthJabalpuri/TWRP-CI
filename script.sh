@@ -1,12 +1,12 @@
 MANIFEST_URL="https://github.com/HemanthJabalpuri/platform_manifest_twrp_aosp"
 MANIFEST_BRANCH="twrp-12.1"
-DEVICE_TREE_URL="https://github.com/HemanthJabalpuri/twrp_motorola_rhode"
+DEVICE_TREE_URL="https://github.com/HemanthJabalpuri/twrp_motorola_devon"
 DEVICE_TREE_BRANCH="android-12.1"
-DEVICE_PATH="device/motorola/rhode"
+DEVICE_PATH="device/motorola/devon"
 COMMON_TREE_URL=""
 COMMON_PATH=""
 BUILD_TARGET="boot"
-TW_DEVICE_VERSION="ker_module_1"
+TW_DEVICE_VERSION="test4"
 
 DEVICE_NAME="$(echo $DEVICE_PATH | cut -d "/" -f 3)"
 case $MANIFEST_BRANCH in
@@ -106,7 +106,8 @@ upload() {
   }
 
   if [ $BUILD_TARGET = "boot" ]; then
-    git clone --depth=1 https://github.com/HemanthJabalpuri/twrp_abtemplate
+    #git clone --depth=1 https://github.com/HemanthJabalpuri/twrp_abtemplate
+    cp -r $WORK_PATH/$DEVICE_PATH/installer twrp_abtemplate
     cd twrp_abtemplate
     cp ../${OUTFILE%.zip}.img .
     zip -r9 $OUTFILE *
