@@ -12,9 +12,10 @@ mkdir -p $my_top_dir/prebuilts/
 cd $my_top_dir/prebuilts/
 clone_repo build-tools build-tools
 clone_repo gcc/linux-x86/aarch64/aarch64-linux-android-4.9 gcc/linux-x86/aarch64/aarch64-linux-android-4.9
-clone_repo gcc/linux-x86/arm/arm-eabi-4.8 gcc/linux-x86/arm/arm-eabi-4.8
 clone_repo gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8 gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8
 clone_repo clang/host/linux-x86 clang/host/linux-x86
+tag="android-8.1.0_r81"
+clone_repo gcc/linux-x86/arm/arm-eabi-4.8 gcc/linux-x86/arm/arm-eabi-4.8
 cd -
 
 
