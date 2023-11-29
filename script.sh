@@ -5,7 +5,7 @@ clone_repo() {
   git clone --depth=1 $remote/$1 -b $tag $2
 }
 
-tag="android-12.1.0_r26"
+tag="android-11.0.0_r48"
 remote="https://android.googlesource.com/platform/prebuilts"
 
 mkdir -p $my_top_dir/prebuilts/
