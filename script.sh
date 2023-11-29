@@ -1,4 +1,4 @@
-product=rhode
+product=hawao
 my_top_dir=$PWD
 
 clone_repo() {
@@ -19,21 +19,22 @@ clone_repo gcc/linux-x86/arm/arm-eabi-4.8 gcc/linux-x86/arm/arm-eabi-4.8
 cd -
 
 
-tag="MMI-S1SRS32.38-132-14"
-remote="https://github.com/MotorolaMobilityLLC"
+tag="devv"
+remote="https://github.com/Dhina17"
 
 mkdir kernel && cd kernel
-clone_repo kernel-msm msm-4.19
-clone_repo vendor-qcom-opensource-wlan-qcacld-3.0 drivers/staging/qcacld-3.0/
-clone_repo vendor-qcom-opensource-wlan-qca-wifi-host-cmn drivers/staging/qca-wifi-host-cmn/
-clone_repo vendor-qcom-opensource-wlan-fw-api drivers/staging/fw-api/
-clone_repo vendor-qcom-opensource-audio-kernel techpack/audio/
-clone_repo kernel-msm-techpack-display techpack/display/
-clone_repo kernel-msm-techpack-video techpack/video/
-clone_repo kernel-msm-techpack-camera techpack/camera/
-clone_repo kernel-devicetree arch/arm64/boot/dts/vendor/
-clone_repo kernel-camera-devicetree arch/arm64/boot/dts/vendor/qcom/camera/
-clone_repo kernel-display-devicetree arch/arm64/boot/dts/vendor/qcom/display/
+clone_repo android_kernel_motorola_sm6225 msm-4.19
+#clone_repo kernel-msm msm-4.19
+#clone_repo vendor-qcom-opensource-wlan-qcacld-3.0 drivers/staging/qcacld-3.0/
+#clone_repo vendor-qcom-opensource-wlan-qca-wifi-host-cmn drivers/staging/qca-wifi-host-cmn/
+#clone_repo vendor-qcom-opensource-wlan-fw-api drivers/staging/fw-api/
+#clone_repo vendor-qcom-opensource-audio-kernel techpack/audio/
+#clone_repo kernel-msm-techpack-display techpack/display/
+#clone_repo kernel-msm-techpack-video techpack/video/
+#clone_repo kernel-msm-techpack-camera techpack/camera/
+#clone_repo kernel-devicetree arch/arm64/boot/dts/vendor/
+#clone_repo kernel-camera-devicetree arch/arm64/boot/dts/vendor/qcom/camera/
+#clone_repo kernel-display-devicetree arch/arm64/boot/dts/vendor/qcom/display/
 cd -
 
 mkdir -p $my_top_dir/out/target/product/generic/obj/kernel/msm-4.19 
