@@ -10,14 +10,5 @@ task:
       cpu: 8
       memory: 32G
 
-  Sync_script:
-      - bash script.sh sync
-
-  DevDepsSync_script:
-      - bash script.sh syncDevDeps
-
   Build_script:
-      - bash script.sh build
-
-  Upload_script:
-      - bash script.sh upload
+      - bash script.sh
