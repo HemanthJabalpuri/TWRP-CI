@@ -19,7 +19,7 @@ clone_repo gcc/linux-x86/arm/arm-eabi-4.8 gcc/linux-x86/arm/arm-eabi-4.8
 cd -
 
 
-tag="devv"
+tag="dev"
 remote="https://github.com/Dhina17"
 
 mkdir kernel && cd kernel
