@@ -1,24 +1,25 @@
+product=rhode
 my_top_dir=$PWD
 
 clone_repo() {
-  git clone --depth=1 $remote/$1 $tag $2
+  git clone --depth=1 $remote/$1 -b $tag $2
 }
 
-remote=https://android.googlesource.com/platform/prebuilts
+tag="android-12.1.0_r26"
+remote="https://android.googlesource.com/platform/prebuilts"
 
 mkdir -p $my_top_dir/prebuilts/
 cd $my_top_dir/prebuilts/
-clone_repo gcc/linux-x86/aarch64/aarch64-linux-android-4.9 gcc/linux-x86/aarch64
-clone_repo gcc/linux-x86/arm/arm-eabi-4.8 gcc/linux-x86/arm
+clone_repo build-tools build-tools
+clone_repo gcc/linux-x86/aarch64/aarch64-linux-android-4.9 gcc/linux-x86/aarch64/aarch64-linux-android-4.9
+clone_repo gcc/linux-x86/arm/arm-eabi-4.8 gcc/linux-x86/arm/arm-eabi-4.8
 clone_repo gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8 gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8
 clone_repo clang/host/linux-x86 clang/host/linux-x86
 cd -
 
 
-tag="-b MMI-S1SRS32.38-132-14"
-product=rhode
-
-remote=https://github.com/MotorolaMobilityLLC
+tag="MMI-S1SRS32.38-132-14"
+remote="https://github.com/MotorolaMobilityLLC"
 
 mkdir kernel && cd kernel
 clone_repo kernel-msm msm-4.19
