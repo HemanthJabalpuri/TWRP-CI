@@ -1,123 +1,126 @@
-MANIFEST_URL="https://github.com/HemanthJabalpuri/platform_manifest_twrp_aosp"
-MANIFEST_BRANCH="twrp-12.1"
-DEVICE_TREE_URL="https://github.com/HemanthJabalpuri/twrp_motorola_devon"
-DEVICE_TREE_BRANCH="android-12.1"
-DEVICE_PATH="device/motorola/devon"
-COMMON_TREE_URL=""
-COMMON_PATH=""
-BUILD_TARGET="boot"
-TW_DEVICE_VERSION="5"
+my_top_dir=$PWD
 
-DEVICE_NAME="$(echo $DEVICE_PATH | cut -d "/" -f 3)"
-case $MANIFEST_BRANCH in
-  twrp-1*) buildtree="twrp";;
-  *) buildtree="omni";;
-esac
-MAKEFILE_NAME="${buildtree}_$DEVICE_NAME"
-
-##
-abort() { echo "$1"; exit 1; }
-WORK_PATH="$HOME/work" # Full (absolute) path.
-[ -e $WORK_PATH ] || mkdir $WORK_PATH
-cd $WORK_PATH
-##
-
-sync() {
-  # Install repo
-  mkdir ~/bin
-  curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
-  chmod a+x ~/bin/repo
-  sudo ln -sf ~/bin/repo /usr/bin/repo
-  sudo ln -sf ~/bin/repo /usr/local/bin/repo
-
-  # Initialize repo
-  python3 /usr/local/bin/repo init --depth=1 $MANIFEST_URL -b $MANIFEST_BRANCH
-
-  # Repo Sync
-  python3 /usr/local/bin/repo sync -j$(nproc --all) --force-sync || abort "sync error"
-
-  # Apply patches
-  cd bootable/recovery
-  curl -sL https://gist.githubusercontent.com/HemanthJabalpuri/5acb866f9fe11b34e5b469b4500e0769/raw/c961f01a35d2701ae7dd6faf8544449dda25ae1f/patch.patch | patch -p 1
-  cd -
-  #cd system/core
-  #curl -sL https://github.com/HemanthJabalpuri/twrp_motorola_rhode/files/11550608/dontLoadVendorModules.txt | patch -p 1
-  #cd -
-
-  # Clone device tree
-  git clone $DEVICE_TREE_URL -b $DEVICE_TREE_BRANCH $DEVICE_PATH || abort "ERROR: Failed to Clone the Device Tree!"
-
-  # Clone common tree
-  if [ -n "$COMMON_TREE_URL" ] && [ -n "$COMMON_PATH" ]; then
-    git clone $COMMON_TREE_URL -b $DEVICE_TREE_BRANCH $COMMON_PATH || abort "ERROR: Failed to Clone the Common Tree!"
-  fi
+clone_repo() {
+  git clone --depth=1 $remote/$1 $tag $2
 }
 
-syncDevDeps() {
-  # Sync Device Dependencies
-  depsf=$DEVICE_PATH/${buildtree}.dependencies
-  if [ -f $depsf ]; then
-    curl -sL https://raw.githubusercontent.com/CaptainThrowback/Action-Recovery-Builder/main/scripts/convert.sh > ~/convert.sh
-    bash ~/convert.sh $depsf
-    repo sync -j$(nproc --all)
-  else
-    echo " Skipping, since $depsf not found"
-  fi
-}
+remote=https://android.googlesource.com/platform/prebuilts
 
-build() {
-  export USE_CCACHE=1
-  export CCACHE_SIZE="50G"
-  export CCACHE_DIR="$HOME/work/.ccache"
-  ccache -M ${CCACHE_SIZE}
+mkdir -p $my_top_dir/prebuilts/
+cd $my_top_dir/prebuilts/
+clone_repo gcc/linux-x86/aarch64/aarch64-linux-android-4.9 gcc/linux-x86/aarch64
+clone_repo gcc/linux-x86/arm/arm-eabi-4.8 gcc/linux-x86/arm
+clone_repo gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8 gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8
+clone_repo clang/host/linux-x86 clang/host/linux-x86
+cd -
 
-  # Building recovery
-  source build/envsetup.sh
-  export ALLOW_MISSING_DEPENDENCIES=true
-  lunch ${MAKEFILE_NAME}-eng || abort "ERROR: Failed to lunch the target!"
-  export TW_DEVICE_VERSION
-  mka -j$(nproc --all) ${BUILD_TARGET}image || abort "ERROR: Failed to Build TWRP!"
-}
 
-upload() {
-  # Get Version info stored in variables.h
-  TW_MAIN_VERSION=$(cat bootable/recovery/variables.h | grep "define TW_MAIN_VERSION_STR" | cut -d \" -f2)
-  OUTFILE=TWRP-${TW_MAIN_VERSION}-${TW_DEVICE_VERSION}-${DEVICE_NAME}-$(date "+%Y%m%d%I%M").zip
+tag="-b MMI-S1SRS32.38-132-14"
+product=rhode
 
-  # Change to the Output Directory
-  cd out/target/product/$DEVICE_NAME
-  mv ${BUILD_TARGET}.img ${OUTFILE%.zip}.img
-  zip -r9 $OUTFILE ${OUTFILE%.zip}.img
+remote=https://github.com/MotorolaMobilityLLC
 
-  uploadfile() {
-    # Upload to WeTransfer
-    # NOTE: the current Docker Image, "registry.gitlab.com/sushrut1101/docker:latest", includes the 'transfer' binary by Default
-    curl --upload-file $1 https://free.keep.sh > link.txt || abort "ERROR: Failed to Upload $1!"
+mkdir kernel && cd kernel
+clone_repo kernel-msm msm-4.19
+clone_repo vendor-qcom-opensource-wlan-qcacld-3.0 drivers/staging/qcacld-3.0/
+clone_repo vendor-qcom-opensource-wlan-qca-wifi-host-cmn drivers/staging/qca-wifi-host-cmn/
+clone_repo vendor-qcom-opensource-wlan-fw-api drivers/staging/fw-api/
+clone_repo vendor-qcom-opensource-audio-kernel techpack/audio/
+clone_repo kernel-msm-techpack-display techpack/display/
+clone_repo kernel-msm-techpack-video techpack/video/
+clone_repo kernel-msm-techpack-camera techpack/camera/
+clone_repo kernel-devicetree arch/arm64/boot/dts/vendor/
+clone_repo kernel-camera-devicetree arch/arm64/boot/dts/vendor/qcom/camera/
+clone_repo kernel-display-devicetree arch/arm64/boot/dts/vendor/qcom/display/
+cd -
 
-    # Mirror to oshi.at
-    TIMEOUT=20160
-    curl -T $1 https://oshi.at/$1/${TIMEOUT} > mirror.txt || echo "WARNING: Failed to Mirror the Build!"
+mkdir -p $my_top_dir/out/target/product/generic/obj/kernel/msm-4.19 
 
-    # Show the Download Link
-    DL_LINK=$(cat link.txt)
-    MIRROR_LINK=$(cat mirror.txt | grep Download | cut -d " "  -f 1)
-    echo "==$1=="
-    echo "Download Link: ${DL_LINK}" || echo "ERROR: Failed to Upload the Build!"
-    echo "Mirror: ${MIRROR_LINK}" || echo "WARNING: Failed to Mirror the Build!"
-    echo "=============================================="
-    echo " "
-  }
+kernel_out_dir=$my_top_dir/out/target/product/generic/obj/kernel/msm-4.19 
+kernel_obj_out_dir=$my_top_dir/out/target/product/generic/obj/KERNEL_OBJ 
 
-  if [ $BUILD_TARGET = "boot" ]; then
-    #git clone --depth=1 https://github.com/HemanthJabalpuri/twrp_abtemplate
-    cp -r $WORK_PATH/$DEVICE_PATH/installer twrp_abtemplate
-    cd twrp_abtemplate
-    cp ../${OUTFILE%.zip}.img .
-    zip -r9 $OUTFILE *
-  fi
-  uploadfile $OUTFILE
-}
+make=$my_top_dir/prebuilts/build-tools/linux-x86/bin/make
+aarch64_linux_android_=$my_top_dir/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android-
+x86_64_linux_ar=$my_top_dir/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8/bin/x86_64-linux-ar
+x86_64_linux_ld=$my_top_dir/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8/bin/x86_64-linux-ld
+clang=$my_top_dir/prebuilts/clang/host/linux-x86/clang-r383902b/bin/clang
+arm_eabi_=$my_top_dir/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin/arm-eabi- 
 
-case "$1" in
-  sync|syncDevDeps|build|upload) $1;;
-esac
+cat kernel/msm-4.19/arch/arm64/configs/vendor/bengal-perf_defconfig kernel/msm-4.19/arch/arm64/configs/vendor/ext_config/moto-bengal.config kernel/msm-4.19/arch/arm64/configs/vendor/ext_config/$product-default.config kernel/msm-4.19/arch/arm64/configs/vendor/debugfs.config >> $kernel_out_dir/.config 
+
+$make -j48 -C kernel/msm-4.19 \
+  O=$kernel_out_dir \
+  DTC_EXT=dtc \
+  DTC_OVERLAY_TEST_EXT=ufdt_apply_overlay \
+  CONFIG_BUILD_ARM64_DT_OVERLAY=y \
+  HOSTCC=$clang \
+  HOSTAR=$x86_64_linux_ar \
+  HOSTLD=$x86_64_linux_ld \
+  ARCH=arm64 \
+  CROSS_COMPILE=$aarch64_linux_android_ \
+  REAL_CC=$my_top_dir/vendor/qcom/proprietary/llvm-arm-toolchain-ship/10.0/bin/clang \
+  CLANG_TRIPLE=aarch64-linux-gnu- \
+  defoldconfig
+
+$make -j48 -C kernel/msm-4.19 \
+  'HOSTCFLAGS=-I$my_top_dir/kernel/msm-4.19/include/uapi -I/usr/include -I/usr/include/x86_64-linux-gnu -L/usr/lib -L/usr/lib/x86_64-linux-gnu -fuse-ld=lld' \
+  'HOSTLDFLAGS=-L/usr/lib -L/usr/lib/x86_64-linux-gnu -fuse-ld=lld' \
+  ARCH=arm64 \
+  CROSS_COMPILE=$aarch64_linux_android_ \
+  O=$kernel_out_dir \
+  REAL_CC=$my_top_dir/vendor/qcom/proprietary/llvm-arm-toolchain-ship/10.0/bin/clang \
+  CLANG_TRIPLE=aarch64-linux-gnu- \
+  DTC_EXT=dtc \
+  DTC_OVERLAY_TEST_EXT=ufdt_apply_overlay \
+  CONFIG_BUILD_ARM64_DT_OVERLAY=y \
+  HOSTCC=$clang \
+  HOSTAR=$x86_64_linux_ar \
+  HOSTLD=$x86_64_linux_ld \
+  headers_install
+
+$make -j48 -C kernel/msm-4.19 \
+  ARCH=arm64 \
+  CROSS_COMPILE=$aarch64_linux_android_ \
+  'HOSTCFLAGS=-I$my_top_dir/kernel/msm-4.19/include/uapi -I/usr/include -I/usr/include/x86_64-linux-gnu -L/usr/lib -L/usr/lib/x86_64-linux-gnu -fuse-ld=lld' \
+  'HOSTLDFLAGS=-L/usr/lib -L/usr/lib/x86_64-linux-gnu -fuse-ld=lld' \
+  O=$kernel_out_dir \
+  REAL_CC=$my_top_dir/vendor/qcom/proprietary/llvm-arm-toolchain-ship/10.0/bin/clang \
+  CLANG_TRIPLE=aarch64-linux-gnu- \
+  DTC_EXT=dtc \
+  DTC_OVERLAY_TEST_EXT=ufdt_apply_overlay \
+  CONFIG_BUILD_ARM64_DT_OVERLAY=y \
+  HOSTCC=$clang \
+  HOSTAR=$x86_64_linux_ar \
+  HOSTLD=$x86_64_linux_ld
+
+$make -j48 -C kernel/msm-4.19 \
+  O=$kernel_out_dir \
+  INSTALL_MOD_STRIP=1 \
+  INSTALL_MOD_PATH=$kernel_out_dir/repo/out/target/product/$product/obj/kernel/msm-4.19/staging \
+  REAL_CC=$my_top_dir/vendor/qcom/proprietary/llvm-arm-toolchain-ship/10.0/bin/clang \
+  CLANG_TRIPLE=aarch64-linux-gnu- \
+  DTC_EXT=dtc \
+  DTC_OVERLAY_TEST_EXT=ufdt_apply_overlay \
+  CONFIG_BUILD_ARM64_DT_OVERLAY=y \
+  HOSTCC=$clang \
+  HOSTAR=$x86_64_linux_ar \
+  HOSTLD=$x86_64_linux_ld \
+  modules_install
+
+$make -C kernel/msm-4.19 \
+  O=$kernel_obj_out_dir \
+  ARCH=arm64 \
+  CROSS_COMPILE=$arm_eabi_ \
+  clean
+
+$make -C kernel/msm-4.19 \
+  O=$kernel_obj_out_dir \
+  ARCH=arm64 \
+  CROSS_COMPILE=$arm_eabi_ \
+  mrproper
+
+$make -C kernel/msm-4.19 \
+  O=$kernel_obj_out_dir \
+  ARCH=arm64 \
+  CROSS_COMPILE=$arm_eabi_ \
+  distclean
