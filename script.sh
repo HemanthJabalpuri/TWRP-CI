@@ -19,7 +19,8 @@ git clone --depth=1 https://github.com/LineageOS/android_kernel_motorola_sm6225 
 
 # Build
 
-cat kernel/arch/arm64/configs/vendor/bengal-perf_defconfig kernel/arch/arm64/configs/vendor/ext_config/moto-bengal.config kernel/arch/arm64/configs/vendor/ext_config/rhode-default.config kernel/arch/arm64/configs/vendor/debugfs.config >> kernel/arch/arm64/configs/rhode_defconfig
+cd kernel
+cat arch/arm64/configs/vendor/bengal-perf_defconfig arch/arm64/configs/vendor/ext_config/moto-bengal.config arch/arm64/configs/vendor/ext_config/rhode-default.config arch/arm64/configs/vendor/debugfs.config > arch/arm64/configs/rhode_defconfig
 
 make O=out ARCH=arm64 rhode_defconfig
 
