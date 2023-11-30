@@ -21,12 +21,10 @@ git clone --depth=1 https://github.com/LineageOS/android_kernel_motorola_sm6225 
 
 cat kernel/arch/arm64/configs/vendor/bengal-perf_defconfig kernel/arch/arm64/configs/vendor/ext_config/moto-bengal.config kernel/arch/arm64/configs/vendor/ext_config/rhode-default.config kernel/arch/arm64/configs/vendor/debugfs.config >> kernel/arch/arm64/configs/rhode_defconfig
 
-export MAKE_PATH=$PWD/prebuilts/kernel-build-tools/linux-x86/bin
-
-$MAKE_PATH/make O=out ARCH=arm64 rhode_defconfig
+make O=out ARCH=arm64 rhode_defconfig
 
 PATH="$PWD/prebuilts/clang/kernel/linux-x86/clang-r416183b/bin:$PWD/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin:$PWD/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin:${PATH}" \
-$MAKE_PATH/make -j$(nproc --all) O=out \
+make -j$(nproc --all) O=out \
   ARCH=arm64 \
   CC=clang \
   CLANG_TRIPLE=aarch64-linux-gnu- \
