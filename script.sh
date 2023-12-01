@@ -1,4 +1,4 @@
-MANIFEST_URL="https://github.com/HemanthJabalpuri/android"
+MANIFEST_URL="https://github.com/LineageOS/android"
 MANIFEST_BRANCH="test"
 DEVICE_PATH="device/motorola/rhode"
 BUILD_TARGET="boot"
