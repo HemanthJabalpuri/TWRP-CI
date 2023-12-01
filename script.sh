@@ -1,5 +1,10 @@
+MANIFEST_URL="https://github.com/HemanthJabalpuri/android"
+MANIFEST_BRANCH="lineage-20"
+DEVICE_PATH="device/motorola/rhode"
 BUILD_TARGET="boot"
-DEVICE_NAME="rhode"
+
+DEVICE_NAME="$(echo $DEVICE_PATH | cut -d "/" -f 3)"
+MAKEFILE_NAME="lineage_$DEVICE_NAME"
 
 ##
 abort() { echo "$1"; exit 1; }
@@ -17,12 +22,15 @@ sync() {
   sudo ln -sf ~/bin/repo /usr/local/bin/repo
 
   # Initialize repo
-  python3 /usr/local/bin/repo init --depth=1 --no-repo-verify -u https://github.com/HemanthJabalpuri/android.git -b lineage-20.0 -g default,-mips,-darwin,-notdefault
-
-  git clone https://github.com/HemanthJabalpuri/local_manifest --depth 1 -b rhode .repo/local_manifests
+  python3 /usr/local/bin/repo init --depth=1 $MANIFEST_URL -b $MANIFEST_BRANCH
 
   # Repo Sync
-  python3 /usr/local/bin/repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j8 || abort "sync error"
+  python3 /usr/local/bin/repo sync -j$(nproc --all) --force-sync || abort "sync error"
+}
+
+syncDevDeps() {
+  # Sync Device Dependencies
+  true
 }
 
 build() {
@@ -34,13 +42,12 @@ build() {
   # Building recovery
   source build/envsetup.sh
   export ALLOW_MISSING_DEPENDENCIES=true
-  lunch lineage_rhode-userdebug || abort "ERROR: Failed to lunch the target!"
+  lunch ${MAKEFILE_NAME}-eng || abort "ERROR: Failed to lunch the target!"
   mka -j$(nproc --all) ${BUILD_TARGET}image || abort "ERROR: Failed to Build TWRP!"
 }
 
 upload() {
-  # Get Version info stored in variables.h
-  OUTFILE=lineage-boot-${DEVICE_NAME}-$(date "+%Y%m%d%I%M").zip
+  OUTFILE=lineage-recovery-${DEVICE_NAME}-$(date "+%Y%m%d%I%M").zip
 
   # Change to the Output Directory
   cd out/target/product/$DEVICE_NAME
@@ -70,5 +77,5 @@ upload() {
 }
 
 case "$1" in
-  sync|build|upload) $1;;
+  sync|syncDevDeps|build|upload) $1;;
 esac
