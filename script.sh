@@ -1,5 +1,5 @@
 MANIFEST_URL="https://github.com/HemanthJabalpuri/android"
-MANIFEST_BRANCH="lineage-20"
+MANIFEST_BRANCH="lineage-20.0"
 DEVICE_PATH="device/motorola/rhode"
 BUILD_TARGET="boot"
 
