@@ -1,19 +1,5 @@
-MANIFEST_URL="https://github.com/HemanthJabalpuri/platform_manifest_twrp_aosp"
-MANIFEST_BRANCH="twrp-12.1"
-DEVICE_TREE_URL="https://github.com/HemanthJabalpuri/twrp_infinix_X690B"
-DEVICE_TREE_BRANCH="test"
-DEVICE_PATH="device/infinix/X690B"
-COMMON_TREE_URL=""
-COMMON_PATH=""
-BUILD_TARGET="recovery"
-TW_DEVICE_VERSION="0"
-
-DEVICE_NAME="$(echo $DEVICE_PATH | cut -d "/" -f 3)"
-case $MANIFEST_BRANCH in
-  twrp-1*) buildtree="twrp";;
-  *) buildtree="omni";;
-esac
-MAKEFILE_NAME="${buildtree}_$DEVICE_NAME"
+BUILD_TARGET="boot"
+DEVICE_NAME="rhode"
 
 ##
 abort() { echo "$1"; exit 1; }
@@ -31,38 +17,12 @@ sync() {
   sudo ln -sf ~/bin/repo /usr/local/bin/repo
 
   # Initialize repo
-  python3 /usr/local/bin/repo init --depth=1 $MANIFEST_URL -b $MANIFEST_BRANCH
+  python3 /usr/local/bin/repo init --depth=1 --no-repo-verify -u https://github.com/HemanthJabalpuri/android.git -b lineage-20.0 -g default,-mips,-darwin,-notdefault
+
+  git clone https://github.com/HemanthJabalpuri/local_manifest --depth 1 -b rhode .repo/local_manifests
 
   # Repo Sync
-  python3 /usr/local/bin/repo sync -j$(nproc --all) --force-sync || abort "sync error"
-
-  # Apply patches
-  #cd bootable/recovery
-  #curl -sL https://gist.githubusercontent.com/HemanthJabalpuri/5acb866f9fe11b34e5b469b4500e0769/raw/c961f01a35d2701ae7dd6faf8544449dda25ae1f/patch.patch | patch -p 1
-  #cd -
-  #cd system/core
-  #curl -sL https://github.com/HemanthJabalpuri/twrp_motorola_rhode/files/11550608/dontLoadVendorModules.txt | patch -p 1
-  #cd -
-
-  # Clone device tree
-  git clone $DEVICE_TREE_URL -b $DEVICE_TREE_BRANCH $DEVICE_PATH || abort "ERROR: Failed to Clone the Device Tree!"
-
-  # Clone common tree
-  if [ -n "$COMMON_TREE_URL" ] && [ -n "$COMMON_PATH" ]; then
-    git clone $COMMON_TREE_URL -b $DEVICE_TREE_BRANCH $COMMON_PATH || abort "ERROR: Failed to Clone the Common Tree!"
-  fi
-}
-
-syncDevDeps() {
-  # Sync Device Dependencies
-  depsf=$DEVICE_PATH/${buildtree}.dependencies
-  if [ -f $depsf ]; then
-    curl -sL https://raw.githubusercontent.com/CaptainThrowback/Action-Recovery-Builder/main/scripts/convert.sh > ~/convert.sh
-    bash ~/convert.sh $depsf
-    repo sync -j$(nproc --all)
-  else
-    echo " Skipping, since $depsf not found"
-  fi
+  python3 /usr/local/bin/repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j8 || abort "sync error"
 }
 
 build() {
@@ -74,15 +34,13 @@ build() {
   # Building recovery
   source build/envsetup.sh
   export ALLOW_MISSING_DEPENDENCIES=true
-  lunch ${MAKEFILE_NAME}-eng || abort "ERROR: Failed to lunch the target!"
-  export TW_DEVICE_VERSION
+  lunch lineage_rhode-userdebug || abort "ERROR: Failed to lunch the target!"
   mka -j$(nproc --all) ${BUILD_TARGET}image || abort "ERROR: Failed to Build TWRP!"
 }
 
 upload() {
   # Get Version info stored in variables.h
-  TW_MAIN_VERSION=$(cat bootable/recovery/variables.h | grep "define TW_MAIN_VERSION_STR" | cut -d \" -f2)
-  OUTFILE=TWRP-${TW_MAIN_VERSION}-${TW_DEVICE_VERSION}-${DEVICE_NAME}-$(date "+%Y%m%d%I%M").zip
+  OUTFILE=lineage-boot-${DEVICE_NAME}-$(date "+%Y%m%d%I%M").zip
 
   # Change to the Output Directory
   cd out/target/product/$DEVICE_NAME
@@ -108,16 +66,9 @@ upload() {
     echo " "
   }
 
-  if [ $BUILD_TARGET = "boot" ]; then
-    #git clone --depth=1 https://github.com/HemanthJabalpuri/twrp_abtemplate
-    cp -r $WORK_PATH/$DEVICE_PATH/installer twrp_abtemplate
-    cd twrp_abtemplate
-    cp ../${OUTFILE%.zip}.img .
-    zip -r9 $OUTFILE *
-  fi
   uploadfile $OUTFILE
 }
 
 case "$1" in
-  sync|syncDevDeps|build|upload) $1;;
+  sync|build|upload) $1;;
 esac
