@@ -26,6 +26,13 @@ sync() {
 
   # Repo Sync
   python3 /usr/local/bin/repo sync -j$(nproc --all) --force-sync || abort "sync error"
+
+  # Clone device stuff
+  git clone --depth=1 https://github.com/LineageOS/android_device_motorola_sm6225-common -b lineage-20 device/motorola/sm6225-common
+  git clone --depth=1 https://github.com/TheMuppets/proprietary_vendor_motorola_sm6225-common -b lineage-20 vendor/motorola/sm6225-common
+  git clone --depth=1 https://github.com/LineageOS/android_kernel_motorola_sm6225 -b lineage-20 kernel/motorola/sm6225
+  git clone --depth=1 https://github.com/LineageOS/android_device_motorola_rhode -b lineage-20 device/motorola/rhode
+  git clone --depth=1 https://github.com/TheMuppets/proprietary_vendor_motorola_rhode -b lineage-20 vendor/motorola/rhode
 }
 
 syncDevDeps() {
@@ -42,7 +49,7 @@ build() {
   # Building recovery
   source build/envsetup.sh
   export ALLOW_MISSING_DEPENDENCIES=true
-  lunch ${MAKEFILE_NAME}-eng || abort "ERROR: Failed to lunch the target!"
+  lunch ${MAKEFILE_NAME}-userdebug || abort "ERROR: Failed to lunch the target!"
   mka -j$(nproc --all) ${BUILD_TARGET}image || abort "ERROR: Failed to Build TWRP!"
 }
 
