@@ -1,5 +1,5 @@
 MANIFEST_URL="https://github.com/HemanthJabalpuri/android"
-MANIFEST_BRANCH="test2"
+MANIFEST_BRANCH="kernel"
 DEVICE_PATH="device/motorola/rhode"
 BUILD_TARGET="boot"
 
