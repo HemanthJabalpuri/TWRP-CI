@@ -45,7 +45,10 @@ sync() {
   clone_repo vendor-qcom-opensource-audio-kernel techpack/audio/
   apply_p "techpack: audio: Correct symlinks" 6adaad48ced68b45ceb7d4c0bfe03acb88798327
   apply_p "techpack: makefile: do not export all the variables" 4173005c7f620c3c81802a5757423449ec1a72a8
-  apply_p "techpack: audio: Setup build makefiles for bengal" a1b89bb775bb481acc11a9adef40c5f79e1900a6
+  #apply_p "techpack: audio: Setup build makefiles for bengal" a1b89bb775bb481acc11a9adef40c5f79e1900a6
+  cd techpack/audio
+  curl -sL https://gist.githubusercontent.com/HemanthJabalpuri/44e958166e690caec692c915e9ba1309/raw/2b7b76211786ab863b091a045534762b82d71575/setup_build_makefiles.patch | patch -p 1
+  cd -
 
   clone_repo kernel-msm-techpack-display techpack/display/
   clone_repo kernel-msm-techpack-video techpack/video/
@@ -62,8 +65,8 @@ sync() {
 build() {
   cat arch/arm64/configs/vendor/bengal-perf_defconfig \
       arch/arm64/configs/vendor/ext_config/moto-bengal.config \
-	  arch/arm64/configs/vendor/ext_config/${product}-default.config \
-	  arch/arm64/configs/vendor/debugfs.config > arch/arm64/configs/${product}_defconfig
+      arch/arm64/configs/vendor/ext_config/${product}-default.config \
+      arch/arm64/configs/vendor/debugfs.config > arch/arm64/configs/${product}_defconfig
 
   make O=out ARCH=arm64 ${product}_defconfig
 
