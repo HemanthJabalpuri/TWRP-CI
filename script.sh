@@ -63,6 +63,7 @@ sync() {
 
 
 build() {
+  echo $PWD
   cat arch/arm64/configs/vendor/bengal-perf_defconfig arch/arm64/configs/vendor/ext_config/moto-bengal.config arch/arm64/configs/vendor/ext_config/${product}-default.config arch/arm64/configs/vendor/debugfs.config > arch/arm64/configs/${product}_defconfig
 
   make O=out ARCH=arm64 ${product}_defconfig
