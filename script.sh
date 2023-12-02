@@ -63,8 +63,11 @@ sync() {
 
 
 build() {
-  echo $PWD
-  cat arch/arm64/configs/vendor/bengal-perf_defconfig arch/arm64/configs/vendor/ext_config/moto-bengal.config arch/arm64/configs/vendor/ext_config/${product}-default.config arch/arm64/configs/vendor/debugfs.config > arch/arm64/configs/${product}_defconfig
+  cd kernel
+  cat arch/arm64/configs/vendor/bengal-perf_defconfig \
+      arch/arm64/configs/vendor/ext_config/moto-bengal.config \
+      arch/arm64/configs/vendor/ext_config/${product}-default.config \
+      arch/arm64/configs/vendor/debugfs.config > arch/arm64/configs/${product}_defconfig
 
   make O=out ARCH=arm64 ${product}_defconfig
 
@@ -82,7 +85,7 @@ upload() {
   OUTFILE=kernel-${product}-$(date "+%Y%m%d%I%M").gz
 
   # Change to the Output Directory
-  cd out/arch/arm64/boot
+  cd kernel/out/arch/arm64/boot
   mv Image.gz $OUTFILE
 
   uploadfile() {
