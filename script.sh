@@ -14,15 +14,15 @@ cd -
 
 # Clone kernel sources
 
-git clone --depth=1 https://github.com/LineageOS/android_kernel_motorola_sm6225 kernel
+git clone --depth=1 https://github.com/Dhina17/android_kernel_motorola_sm6225 -b dev kernel
 
 
 # Build
 
 cd kernel
-cat arch/arm64/configs/vendor/bengal-perf_defconfig arch/arm64/configs/vendor/ext_config/moto-bengal.config arch/arm64/configs/vendor/ext_config/rhode-default.config arch/arm64/configs/vendor/debugfs.config > arch/arm64/configs/rhode_defconfig
+cat arch/arm64/configs/vendor/bengal-perf_defconfig arch/arm64/configs/vendor/ext_config/moto-bengal.config arch/arm64/configs/vendor/ext_config/hawao-default.config arch/arm64/configs/vendor/debugfs.config > arch/arm64/configs/hawao_defconfig
 
-make O=out ARCH=arm64 rhode_defconfig
+make O=out ARCH=arm64 hawao_defconfig
 
 PATH="$my_top_dir/prebuilts/clang/kernel/linux-x86/clang-r416183b/bin:$my_top_dir/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin:$my_top_dir/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin:${PATH}" \
 make -j$(nproc --all) O=out \
