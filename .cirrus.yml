@@ -3,12 +3,18 @@ env:
     CIRRUS_SHELL: bash
 
 task:
-  name: "TWRP CI"
+  name: "Kernel CI"
   timeout_in: 120m
   container:
       image: ghcr.io/faoliveira78/docker:latest
       cpu: 8
       memory: 32G
 
+  Sync_script:
+      - bash script.sh sync
+
   Build_script:
-      - bash script.sh
+      - bash script.sh build
+
+  Upload_script:
+      - bash script.sh upload
