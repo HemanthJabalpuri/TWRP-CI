@@ -1,3 +1,4 @@
+product=rhode
 my_top_dir=$PWD
 
 # Clone compilers
@@ -11,18 +12,51 @@ git clone --depth=1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86
 #git clone --depth=1 https://github.com/LineageOS/android_prebuilts_tools-lineage tools-lineage
 cd -
 
-
 # Clone kernel sources
 
-git clone --depth=1 https://github.com/Dhina17/android_kernel_motorola_sm6225 -b dev kernel
+clone_repo() {
+  git clone --depth=1 $remote/$1 -b $tag $2
+}
 
+tag="MMI-S1SRS32.38-132-14"
+remote="https://github.com/MotorolaMobilityLLC"
 
-# Build
-
+clone_repo kernel-msm kernel
 cd kernel
-cat arch/arm64/configs/vendor/bengal-perf_defconfig arch/arm64/configs/vendor/ext_config/moto-bengal.config arch/arm64/configs/vendor/ext_config/hawao-default.config arch/arm64/configs/vendor/debugfs.config > arch/arm64/configs/hawao_defconfig
+clone_repo vendor-qcom-opensource-wlan-qcacld-3.0 drivers/staging/qcacld-3.0/
+clone_repo vendor-qcom-opensource-wlan-qca-wifi-host-cmn drivers/staging/qca-wifi-host-cmn/
+clone_repo vendor-qcom-opensource-wlan-fw-api drivers/staging/fw-api/
+clone_repo vendor-qcom-opensource-audio-kernel techpack/audio/
+clone_repo kernel-msm-techpack-display techpack/display/
+clone_repo kernel-msm-techpack-video techpack/video/
+clone_repo kernel-msm-techpack-camera techpack/camera/
+clone_repo kernel-devicetree arch/arm64/boot/dts/vendor/
+clone_repo kernel-camera-devicetree arch/arm64/boot/dts/vendor/qcom/camera/
+clone_repo kernel-display-devicetree arch/arm64/boot/dts/vendor/qcom/display/
 
-make O=out ARCH=arm64 hawao_defconfig
+# Apply patches
+apply_p() {
+  curl -sL https://github.com/Dhina17/android_kernel_motorola_sm6225/commit/${1}.patch | patch -p 1
+}
+
+# techpack: audio: Correct symlinks
+apply_p 6adaad48ced68b45ceb7d4c0bfe03acb88798327
+
+# drivers: staging: Include qcacld-3.0 source
+apply_p 53588600c813d33f2fdc0d5ee2ed67a9901195e3
+
+# qcacld: nuke Kconfig-based configuration entirely
+apply_p 1d040c25b85a542d79d87bed52f3846e982b4a2d
+
+# qcacld-3.0: Fix compilation due to wrong ifdef guard
+apply_p 0322b6c1dffe2589bcee43914483f459f77a0f22
+
+# techpack: makefile: do not export all the variables
+apply_p 4173005c7f620c3c81802a5757423449ec1a72a8
+
+cat arch/arm64/configs/vendor/bengal-perf_defconfig arch/arm64/configs/vendor/ext_config/moto-bengal.config arch/arm64/configs/vendor/ext_config/${product}-default.config arch/arm64/configs/vendor/debugfs.config > arch/arm64/configs/${product}_defconfig
+
+make O=out ARCH=arm64 ${product}_defconfig
 
 PATH="$my_top_dir/prebuilts/clang/kernel/linux-x86/clang-r416183b/bin:$my_top_dir/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin:$my_top_dir/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin:${PATH}" \
 make -j$(nproc --all) O=out \
