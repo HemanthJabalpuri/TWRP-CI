@@ -54,6 +54,9 @@ apply_p 0322b6c1dffe2589bcee43914483f459f77a0f22
 # techpack: makefile: do not export all the variables
 apply_p 4173005c7f620c3c81802a5757423449ec1a72a8
 
+# techpack: audio: Setup build makefiles for bengal
+apply_p a1b89bb775bb481acc11a9adef40c5f79e1900a6
+
 cat arch/arm64/configs/vendor/bengal-perf_defconfig arch/arm64/configs/vendor/ext_config/moto-bengal.config arch/arm64/configs/vendor/ext_config/${product}-default.config arch/arm64/configs/vendor/debugfs.config > arch/arm64/configs/${product}_defconfig
 
 make O=out ARCH=arm64 ${product}_defconfig
