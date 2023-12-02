@@ -24,7 +24,7 @@ cat arch/arm64/configs/vendor/bengal-perf_defconfig arch/arm64/configs/vendor/ex
 
 make O=out ARCH=arm64 rhode_defconfig
 
-PATH="$PWD/prebuilts/clang/kernel/linux-x86/clang-r416183b/bin:$PWD/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin:$PWD/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin:${PATH}" \
+PATH="$my_top_dir/prebuilts/clang/kernel/linux-x86/clang-r416183b/bin:$my_top_dir/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin:$my_top_dir/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin:${PATH}" \
 make -j$(nproc --all) O=out \
   ARCH=arm64 \
   CC=clang \
