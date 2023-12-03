@@ -18,7 +18,7 @@ sync() {
 
   # Clone kernel sources and apply patches
   clone_repo() {
-    git clone --depth=1 https://github.com/MotorolaMobilityLLC/$1 -b MMI-S1SR32.38-87-2 $2
+    git clone --depth=1 https://github.com/MotorolaMobilityLLC/$1 -b MMI-S1SRS32.38-132-14 $2
   }
 
   apply_p() {
