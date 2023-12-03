@@ -1,6 +1,9 @@
 product=rhode
 my_top_dir=$PWD
 
+abort() {
+  echo "$1"; exit 1
+}
 
 sync() {
   # Clone compilers
@@ -15,12 +18,13 @@ sync() {
 
   # Clone kernel sources and apply patches
   clone_repo() {
-    git clone --depth=1 https://github.com/MotorolaMobilityLLC/$1 -b MMI-S1SRS32.38-132-14 $2
+    git clone --depth=1 https://github.com/MotorolaMobilityLLC/$1 -b MMI-S1SR32.38-87-2 $2
   }
 
   apply_p() {
     echo "applying commit $1"
     curl -sL https://github.com/Dhina17/android_kernel_motorola_sm6225/commit/${2}.patch | patch -p 1
+    [ $? -ne 0 ] && abort "failed to apply patch"
   }
 
   clone_repo kernel-msm kernel
