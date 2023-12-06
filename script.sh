@@ -34,14 +34,14 @@ sync() {
   curl -sL https://gist.githubusercontent.com/HemanthJabalpuri/44e958166e690caec692c915e9ba1309/raw/4595e439ffd0186a109ab4a631e460545e82e120/force_load.patch | patch -p 1
 
   apply_p "arch: arm64: dts: Exclude standard dts if vendor dts exists" a7da5d0e2745cf0d9c85b256c88657b0dcbcc1b9
-  #apply_p "moto-bengal: Enable QCACLD" cb4e143a2526894d8f2813538403da274e461616
+  apply_p "moto-bengal: Enable QCACLD" cb4e143a2526894d8f2813538403da274e461616
 
   clone_repo vendor-qcom-opensource-wlan-qcacld-3.0 drivers/staging/qcacld-3.0/
-  #apply_p "drivers: staging: Include qcacld-3.0 source" 53588600c813d33f2fdc0d5ee2ed67a9901195e3
-  #apply_p "qcacld: nuke Kconfig-based configuration entirely" 1d040c25b85a542d79d87bed52f3846e982b4a2d
-  #apply_p "qcacld-3.0: Fix compilation due to wrong ifdef guard" 0322b6c1dffe2589bcee43914483f459f77a0f22
-  #apply_p "qcacld-3.0: Always force user build." bdf3d2850166853712360700477430a6a25620e4
-  #apply_p "qcacld-3.0: Fix regulatory domain country names." f43d4405b43e91e2632b9c31479c851854b84c53
+  apply_p "drivers: staging: Include qcacld-3.0 source" 53588600c813d33f2fdc0d5ee2ed67a9901195e3
+  apply_p "qcacld: nuke Kconfig-based configuration entirely" 1d040c25b85a542d79d87bed52f3846e982b4a2d
+  apply_p "qcacld-3.0: Fix compilation due to wrong ifdef guard" 0322b6c1dffe2589bcee43914483f459f77a0f22
+  apply_p "qcacld-3.0: Always force user build." bdf3d2850166853712360700477430a6a25620e4
+  apply_p "qcacld-3.0: Fix regulatory domain country names." f43d4405b43e91e2632b9c31479c851854b84c53
 
   clone_repo vendor-qcom-opensource-wlan-qca-wifi-host-cmn drivers/staging/qca-wifi-host-cmn/
   clone_repo vendor-qcom-opensource-wlan-fw-api drivers/staging/fw-api/
