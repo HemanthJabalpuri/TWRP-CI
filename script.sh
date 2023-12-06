@@ -30,8 +30,8 @@ sync() {
   clone_repo kernel-msm kernel
   cd kernel
 
-  #echo "- applying force load modules patch"
-  #curl -sL https://gist.githubusercontent.com/HemanthJabalpuri/44e958166e690caec692c915e9ba1309/raw/b8f37c0bdbdf87e3e827e0a3c075253b2ecc7540/force_load_modules.patch | patch -p 1
+  echo "- applying force load modules patch"
+  curl -sL https://gist.githubusercontent.com/HemanthJabalpuri/44e958166e690caec692c915e9ba1309/raw/4595e439ffd0186a109ab4a631e460545e82e120/force_load.patch | patch -p 1
 
   apply_p "arch: arm64: dts: Exclude standard dts if vendor dts exists" a7da5d0e2745cf0d9c85b256c88657b0dcbcc1b9
   #apply_p "moto-bengal: Enable QCACLD" cb4e143a2526894d8f2813538403da274e461616
