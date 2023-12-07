@@ -19,6 +19,8 @@ sync() {
     [ $? -ne 0 ] && abort "failed to apply patch"
   }
 
+  git clone --depth=1 https://github.com/LineageOS/android_kernel_motorola_sm6225 kernel
+
   #cd kernel
   #echo "- applying force load modules patch"
   #curl -sL https://gist.githubusercontent.com/HemanthJabalpuri/44e958166e690caec692c915e9ba1309/raw/4595e439ffd0186a109ab4a631e460545e82e120/force_load.patch | patch -p 1
