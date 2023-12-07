@@ -19,7 +19,7 @@ sync() {
     [ $? -ne 0 ] && abort "failed to apply patch"
   }
 
-  git clone --depth=1 https://github.com/LineageOS/android_kernel_motorola_sm6225 kernel
+  git clone --depth=1 https://github.com/HemanthJabalpuri/android_kernel_motorola_rhode kernel
 
   #cd kernel
   #echo "- applying force load modules patch"
@@ -52,7 +52,7 @@ upload() {
   # Change to the Output Directory
   #cd kernel/out/arch/arm64/boot
   #mv Image.gz $OUTFILE
-  ls -lhR kernel > list.txt
+  ls -lhR kernel/out > list.txt
 
   uploadfile() {
     # Upload to WeTransfer
