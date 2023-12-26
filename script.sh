@@ -1,12 +1,12 @@
 MANIFEST_URL="https://github.com/HemanthJabalpuri/platform_manifest_twrp_aosp"
 MANIFEST_BRANCH="twrp-12.1"
-DEVICE_TREE_URL="https://github.com/HemanthJabalpuri/twrp_motorola_rhode"
+DEVICE_TREE_URL="https://github.com/HemanthJabalpuri/twrp_motorola_hawao"
 DEVICE_TREE_BRANCH="android-12.1"
-DEVICE_PATH="device/motorola/rhode"
+DEVICE_PATH="device/motorola/hawao"
 COMMON_TREE_URL=""
 COMMON_PATH=""
 BUILD_TARGET="boot"
-TW_DEVICE_VERSION="8-test1"
+TW_DEVICE_VERSION="test0"
 
 DEVICE_NAME="$(echo $DEVICE_PATH | cut -d "/" -f 3)"
 case $MANIFEST_BRANCH in
